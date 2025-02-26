@@ -8,6 +8,8 @@ import az.texnoera.ecommerce.model.request.UserRequestForUpdate;
 import az.texnoera.ecommerce.model.response.Result;
 import az.texnoera.ecommerce.model.response.UserResponse;
 
+import java.util.List;
+
 public interface UserService {
 
     UserResponse addUser( UserRequest userRequest);

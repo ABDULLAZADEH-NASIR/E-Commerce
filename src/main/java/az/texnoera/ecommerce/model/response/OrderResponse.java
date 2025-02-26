@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -16,5 +18,5 @@ public class OrderResponse {
     private Long orderId;
     private Long userId;
     private String userName;
-    private List<ProductResponse> products=new ArrayList<>();
+    private Set<ProductResponse> products=new HashSet<>();
 }

@@ -4,7 +4,6 @@ import az.texnoera.ecommerce.ExceptionsHandle.BasedExceptionHandle;
 import az.texnoera.ecommerce.entity.User;
 import az.texnoera.ecommerce.entity.UserEmail;
 import az.texnoera.ecommerce.maper.UserEmailMaper;
-import az.texnoera.ecommerce.maper.UserMapper;
 import az.texnoera.ecommerce.model.enums.ExceptionStatusCode;
 import az.texnoera.ecommerce.model.request.UserEmailRequestForSave;
 import az.texnoera.ecommerce.model.response.Result;
@@ -67,7 +66,7 @@ public class UserEmailServiceIMPL implements UserEmailService {
     @Override
     public Result<UserEmailResponse> getAllEmails(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<UserEmail> userEmails=userEmailRepo.findAll(pageable);
+        Page<UserEmail> userEmails=userEmailRepo.findAllUserEmail(pageable);
         List<UserEmailResponse>userEmailResponses=userEmails.stream()
                 .map(UserEmailMaper::UserEmailToUserEmailResponse).toList();
         return new Result<>(userEmailResponses,page,pageSize,userEmails.getTotalPages());
@@ -75,7 +74,7 @@ public class UserEmailServiceIMPL implements UserEmailService {
 
     @Override
     public UserEmailResponse getUserEmailById(Long id) {
-        UserEmail userEmail=userEmailRepo.findById(id)
+        UserEmail userEmail=userEmailRepo.findUserEmailByUserEmailId(id)
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_EMAIL_NOT_FOUND));
         return UserEmailMaper.UserEmailToUserEmailResponse(userEmail);
