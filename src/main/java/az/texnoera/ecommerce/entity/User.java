@@ -1,15 +1,17 @@
 package az.texnoera.ecommerce.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
 @Entity
 @Table(name = "users")
@@ -17,28 +19,16 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long userId;
+    private Long id;
     @Column(nullable = false)
-    private String userName;
+    private String username;
     @Column(nullable = false)
     private String password;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private Set<Order> orders=new HashSet<>();
+    private List<Order>orders=new ArrayList<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private Set<UserEmail> userEmails=new HashSet<>();
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<UserEmail> UserEmails=new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(userId, user.userId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId);
-    }
 }

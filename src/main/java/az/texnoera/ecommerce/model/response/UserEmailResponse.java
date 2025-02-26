@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserEmailResponse {
-    private Long userEmailId;
-    private UserResponseForUserEmail userResponseForUserEmail;
+    private Long id;
+    private UserResponseForUserEmail userEmailResponse;
 }

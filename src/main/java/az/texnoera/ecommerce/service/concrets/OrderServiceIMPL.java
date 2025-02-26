@@ -1,5 +1,6 @@
 package az.texnoera.ecommerce.service.concrets;
 import az.texnoera.ecommerce.ExceptionsHandle.BasedExceptionHandle;
+import az.texnoera.ecommerce.advice.GlobalExcepHandle;
 import az.texnoera.ecommerce.entity.Order;
 import az.texnoera.ecommerce.entity.Product;
 import az.texnoera.ecommerce.entity.User;
@@ -20,10 +21,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.HTMLDocument;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +33,7 @@ public class OrderServiceIMPL implements OrderService {
     private final OrderRepo orderRepo;
     private final UserRepo userRepo;
     private final ProductRepo productRepo;
+    private final OrderMaper orderMaper;
 
 
     @Override
@@ -45,30 +46,30 @@ public class OrderServiceIMPL implements OrderService {
                        ExceptionStatusCode.PRODUCT_NOT_FOUND));
        Order newOrder=new Order();
        newOrder.setUser(user);
-       newOrder.setProducts(new HashSet<>());
+       newOrder.setProducts(new ArrayList<>());
        newOrder.getProducts().add(product);
        orderRepo.save(newOrder);
        user.getOrders().add(newOrder);
        userRepo.save(user);
        product.getOrders().add(newOrder);
        productRepo.save(product);
-       return OrderMaper.OrderToResponse(newOrder);
+       return orderMaper.OrderToResponse(newOrder);
     }
 
     @Override
     public List<OrderResponse> getAllOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> orders = orderRepo.findAllOrders(pageable);
-        List<OrderResponse>orderResponses=orders.stream().map(OrderMaper::OrderToResponse).toList();
+        Page<Order> orders = orderRepo.findAll(pageable);
+        List<OrderResponse>orderResponses=orders.stream().map(orderMaper::OrderToResponse).toList();
         return new Result<>(orderResponses,page,size,orders.getTotalPages()).getData();
     }
 
     @Override
     public OrderResponse getOrderById(Long id) {
-        Order order=orderRepo.findOrderByOrderId(id).
+        Order order=orderRepo.findById(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.ORDER_NOT_FOUND));
-        return OrderMaper.OrderToResponse(order);
+        return orderMaper.OrderToResponse(order);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class OrderServiceIMPL implements OrderService {
         Order order=orderRepo.findById(id)
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.ORDER_NOT_FOUND));
-        User user=userRepo.findById(order.getUser().getUserId())
+        User user=userRepo.findById(order.getUser().getId())
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
 
@@ -84,6 +85,8 @@ public class OrderServiceIMPL implements OrderService {
         orderRepo.delete(order);
         user.getOrders().remove(order);
         userRepo.save(user);
+
+
     }
 
     @Override
@@ -105,7 +108,7 @@ public class OrderServiceIMPL implements OrderService {
 
         while (iterator.hasNext()){
             Product p=iterator.next();
-            if (p.getProductId().equals(product.getProductId())){
+            if (p.getId().equals(product.getId())){
                 order1.getProducts().remove(p);
                 orderRepo.save(order1);
                 p.getOrders().remove(order1);
@@ -121,7 +124,7 @@ public class OrderServiceIMPL implements OrderService {
         orderRepo.save(order1);
         product1.getOrders().add(order1);
         productRepo.save(product);
-        return OrderMaper.OrderToResponse(order1);
+        return orderMaper.OrderToResponse(order1);
     }
 
     @Override
@@ -138,7 +141,7 @@ public class OrderServiceIMPL implements OrderService {
           orderRepo.save(order);
           product.getOrders().add(order);
           productRepo.save(product);
-        return OrderMaper.OrderToResponse(order);
+        return orderMaper.OrderToResponse(order);
     }
 }
 

@@ -23,6 +23,6 @@ public class UserEmailRequest {
     @Positive
     private Long userId;
     @NotNull
-    @Pattern(regexp = "^[A-Za-zƏÖĞÜÇŞIəöğüçşı]{2,11}$",message = "FirstName is not valid")
+    @Pattern(regexp = "^[A-Za-zƏəĞğİıÖöŞşÜüÇç]{1,11}$",message = "FirstName is not valid")
     private String userName;
 }
