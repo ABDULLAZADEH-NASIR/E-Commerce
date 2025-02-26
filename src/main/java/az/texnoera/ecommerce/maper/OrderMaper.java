@@ -2,18 +2,26 @@ package az.texnoera.ecommerce.maper;
 import az.texnoera.ecommerce.entity.Order;
 import az.texnoera.ecommerce.model.response.OrderResponse;
 import az.texnoera.ecommerce.model.response.ProductResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
-import org.springframework.stereotype.Component;
+import lombok.Data;
 
-import java.util.ArrayList;
-@Mapper(componentModel = "spring",
-nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-unmappedTargetPolicy = ReportingPolicy.IGNORE)
+
+
 public interface OrderMaper {
 
-       OrderResponse OrderToResponse(Order order) ;
+     static   OrderResponse OrderToResponse(Order order) {
+            return OrderResponse.builder()
+                    .orderId(order.getOrderId())
+                    .userId(order.getUser().getUserId())
+                    .products(order.getProducts().stream().map(p->
+                            ProductResponse.builder()
+                                    .productId(p.getProductId())
+                                    .productName(p.getProductName())
+                                    .imageUrl(p.getImageUrl())
+                                    .description(p.getDescription())
+                                    .price(p.getPrice())
+                                    .build()).toList())
+                    .build();
+     }
 
 
 }

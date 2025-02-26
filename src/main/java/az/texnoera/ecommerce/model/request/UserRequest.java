@@ -3,21 +3,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class UserRequest {
     @NotNull
     @Pattern(regexp = "^[A-Za-zƏəĞğİıÖöŞşÜüÇç]{1,11}$",message = "Name is not valid")
-    private String name;
+    private String userName;
     @NotNull
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*!?])[A-Za-z\\d@#$%^&*!?]{4,}$",
             message = "Password is not valid")

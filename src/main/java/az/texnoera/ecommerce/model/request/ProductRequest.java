@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class ProductRequest {
     @NotNull
     @Pattern(regexp = "^[A-Za-zƏəĞğİıÖöŞşÜüÇç]{1,11}$",message = "FirstName is not valid")
-    private String name;
+    private String productName;
     @NotNull
     private String description;
     @NotNull

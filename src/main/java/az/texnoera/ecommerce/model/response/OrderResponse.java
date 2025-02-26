@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class OrderResponse {
-    private Long id;
+    private Long orderId;
     private Long userId;
     private String userName;
     private List<ProductResponse> products=new ArrayList<>();
