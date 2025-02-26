@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: yourname
+      changes:
+        - createTable:
+            tableName: products_orders
+            columns:
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: products_orders
+            columnNames: product_id, order_id
+            constraintName: pk_products_orders
+
+        - addForeignKeyConstraint:
+            baseTableName: products_orders
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: id
+            constraintName: fk_products_orders_product
+
+        - addForeignKeyConstraint:
+            baseTableName: products_orders
+            baseColumnNames: order_id
+            referencedTableName: orders
+            referencedColumnNames: id
+            constraintName: fk_products_orders_order
