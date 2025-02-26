@@ -18,6 +18,7 @@ import az.texnoera.ecommerce.repo.ProductRepo;
 import az.texnoera.ecommerce.repo.UserEmailRepo;
 import az.texnoera.ecommerce.repo.UserRepo;
 import az.texnoera.ecommerce.service.abstracts.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -53,7 +55,7 @@ public class UserServiceIMPL implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        User user=userRepo.findById(id).
+        User user=userRepo.findByUserId(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
         return UserMapper.userToResponse(user);
@@ -68,7 +70,7 @@ public class UserServiceIMPL implements UserService {
         List<Order> orders = orderRepo.findAllById(Collections.singletonList(id));
         userRepo.delete(user);
         for(Order order:orders){
-           List<Product>products= order.getProducts();
+           Set<Product> products= order.getProducts();
            for(Product product:products){
                product.getOrders().remove(order);
                productRepo.save(product);
@@ -79,7 +81,7 @@ public class UserServiceIMPL implements UserService {
 
     @Override
     public UserResponse updateUserById(Long id, UserRequestForUpdate userRequest) {
-        User user=userRepo.findById(id).
+        User user=userRepo.findByUserId(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
         user.setUserName(userRequest.getUserName());
@@ -90,18 +92,15 @@ public class UserServiceIMPL implements UserService {
     @Override
     public Result<UserResponse> getAllUsers(int page, int size) {
         Pageable pageable= PageRequest.of(page,size);
-        Page<User> users=userRepo.findAll(pageable);
-        List<UserResponse>list=users.stream().map(UserMapper::userToResponse).toList();
-        return new Result<>(list,page,size,users.getTotalPages());
+        Page<User> users=userRepo.findAllUsers(pageable);
+        List<UserResponse> lists =users.stream().map(UserMapper::userToResponse).toList();
+        return new Result<>(lists,page,size,users.getTotalPages());
     }
 
     @Override
     public String sendMailMessage(MailRequest mailRequest) {
-        Thread thread=new Thread(()->{
             mailSend.sendMail(mailRequest.
                     getTo(),mailRequest.getSubject(),mailRequest.getBody());
-        });
-        thread.start();
         return "Mail Successfully sent";
     }
 

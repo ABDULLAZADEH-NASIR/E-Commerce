@@ -4,6 +4,7 @@ import az.texnoera.ecommerce.model.response.OrderResponse;
 import az.texnoera.ecommerce.model.response.ProductResponse;
 import lombok.Data;
 
+import java.util.stream.Collectors;
 
 
 public interface OrderMaper {
@@ -12,6 +13,7 @@ public interface OrderMaper {
             return OrderResponse.builder()
                     .orderId(order.getOrderId())
                     .userId(order.getUser().getUserId())
+                    .userName(order.getUser().getUserName())
                     .products(order.getProducts().stream().map(p->
                             ProductResponse.builder()
                                     .productId(p.getProductId())
@@ -19,10 +21,8 @@ public interface OrderMaper {
                                     .imageUrl(p.getImageUrl())
                                     .description(p.getDescription())
                                     .price(p.getPrice())
-                                    .build()).toList())
+                                    .build()).collect(Collectors.toSet()))
                     .build();
      }
-
-
 }
 
