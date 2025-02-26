@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class UserRequestForUpdate {
     @NotNull
     @Pattern(regexp = "^[A-Za-zƏəĞğİıÖöŞşÜüÇç]{1,11}$",message = "Name is not valid")
-    private String username;
+    private String userName;
 }

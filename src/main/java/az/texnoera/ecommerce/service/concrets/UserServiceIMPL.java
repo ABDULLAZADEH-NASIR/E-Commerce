@@ -6,7 +6,7 @@ import az.texnoera.ecommerce.entity.Order;
 import az.texnoera.ecommerce.entity.Product;
 import az.texnoera.ecommerce.entity.User;
 import az.texnoera.ecommerce.entity.UserEmail;
-import az.texnoera.ecommerce.maper.UserMaper;
+import az.texnoera.ecommerce.maper.UserMapper;
 import az.texnoera.ecommerce.model.enums.ExceptionStatusCode;
 import az.texnoera.ecommerce.model.request.MailRequest;
 import az.texnoera.ecommerce.model.request.UserRequest;
@@ -25,9 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 @Repository
@@ -38,20 +36,19 @@ public class UserServiceIMPL implements UserService {
     private final OrderRepo orderRepo;
     private final ProductRepo productRepo;
     private  final MailSend mailSend;
-    private final UserMaper userMaper;
 
 
     @Override
     public UserResponse addUser(UserRequest userRequest) {
-        User user = userMaper.UserRequestToUser(userRequest);
+        User user = UserMapper.userRequestToUser(userRequest);
         userRepo.save(user);
-        UserEmail userEmail=new UserEmail();
+        UserEmail userEmail= new UserEmail();
         userEmail.setEmail(userRequest.getEmail());
         userEmail.setUser(user);
         userEmailRepo.save(userEmail);
         user.getUserEmails().add(userEmail);
         userRepo.save(user);
-        return userMaper.UserToResponse(user);
+        return UserMapper.userToResponse(user);
     }
 
     @Override
@@ -59,7 +56,7 @@ public class UserServiceIMPL implements UserService {
         User user=userRepo.findById(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
-        return userMaper.UserToResponse(user);
+        return UserMapper.userToResponse(user);
     }
 
     @Override
@@ -85,16 +82,16 @@ public class UserServiceIMPL implements UserService {
         User user=userRepo.findById(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
-        user.setUsername(userRequest.getUsername());
+        user.setUserName(userRequest.getUserName());
         userRepo.save(user);
-        return userMaper.UserToResponse(user);
+        return UserMapper.userToResponse(user);
     }
 
     @Override
     public Result<UserResponse> getAllUsers(int page, int size) {
         Pageable pageable= PageRequest.of(page,size);
         Page<User> users=userRepo.findAll(pageable);
-        List<UserResponse>list=users.stream().map(userMaper::UserToResponse).toList();
+        List<UserResponse>list=users.stream().map(UserMapper::userToResponse).toList();
         return new Result<>(list,page,size,users.getTotalPages());
     }
 

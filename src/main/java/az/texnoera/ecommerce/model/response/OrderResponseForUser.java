@@ -12,6 +12,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class OrderResponseForUser {
-    private Long id;
+    private Long orderId;
 
 }
