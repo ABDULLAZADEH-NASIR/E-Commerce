@@ -1,6 +1,7 @@
 package az.texnoera.ecommerce.service.abstracts;
 
 
+import az.texnoera.ecommerce.entity.User;
 import az.texnoera.ecommerce.model.request.MailRequest;
 import az.texnoera.ecommerce.model.request.UserRequest;
 import az.texnoera.ecommerce.model.request.UserRequestForUpdate;
@@ -9,7 +10,7 @@ import az.texnoera.ecommerce.model.response.UserResponse;
 
 public interface UserService {
 
-    UserResponse addUser(UserRequest userRequest);
+    UserResponse addUser( UserRequest userRequest);
 
     UserResponse getUserById(Long id);
 

@@ -17,15 +17,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceIMPL implements ProductService {
     private final ProductRepo productRepo;
-    private final ProductMaper productMaper;
 
     @Override
     public void deleteProductById(Long id) {
@@ -40,11 +37,11 @@ public class ProductServiceIMPL implements ProductService {
         Product product=productRepo.findById(id)
                 .orElseThrow(() -> new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.PRODUCT_NOT_FOUND));
-        product.setName(productRequest.getName());
+        product.setProductName(productRequest.getProductName());
         product.setDescription(productRequest.getDescription());
         product.setPrice(productRequest.getPrice());
         productRepo.save(product);
-        return productMaper.ProductToProductResponse(product);
+        return ProductMaper.ProductToProductResponse(product);
     }
 
     @Override
@@ -56,7 +53,7 @@ public class ProductServiceIMPL implements ProductService {
         products=productRepo.findAll(pageable);
 
         List<ProductResponse>productResponses=products.stream().
-                map(productMaper::ProductToProductResponse).toList();
+                map(ProductMaper::ProductToProductResponse).toList();
 
         return new Result<>(productResponses,page,pageSize,products.getTotalPages());
     }
@@ -64,9 +61,9 @@ public class ProductServiceIMPL implements ProductService {
 
     @Override
     public ProductResponse addProduct(ProductRequest productRequest) {
-       Product product=productMaper.ProductRequestToProduct(productRequest);
+       Product product=ProductMaper.ProductRequestToProduct(productRequest);
        productRepo.save(product);
-        return productMaper.ProductToProductResponse(product);
+        return ProductMaper.ProductToProductResponse(product);
     }
 
     @Override
@@ -74,6 +71,6 @@ public class ProductServiceIMPL implements ProductService {
         Product product=productRepo.findById(id).
                 orElseThrow(() -> new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.PRODUCT_NOT_FOUND));
-        return productMaper.ProductToProductResponse(product);
+        return ProductMaper.ProductToProductResponse(product);
     }
 }

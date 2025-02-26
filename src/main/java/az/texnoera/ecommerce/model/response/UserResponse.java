@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UserResponse {
-    private Long id;
-    private String name;
+    private Long userId;
+    private String userName;
     private List<OrderResponseForUser> orders=new ArrayList<>();
     private List<UserEmailResponseForUser> emails=new ArrayList<>();
 }

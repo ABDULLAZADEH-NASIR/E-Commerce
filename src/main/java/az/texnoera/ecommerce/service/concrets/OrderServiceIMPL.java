@@ -1,6 +1,5 @@
 package az.texnoera.ecommerce.service.concrets;
 import az.texnoera.ecommerce.ExceptionsHandle.BasedExceptionHandle;
-import az.texnoera.ecommerce.advice.GlobalExcepHandle;
 import az.texnoera.ecommerce.entity.Order;
 import az.texnoera.ecommerce.entity.Product;
 import az.texnoera.ecommerce.entity.User;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +31,6 @@ public class OrderServiceIMPL implements OrderService {
     private final OrderRepo orderRepo;
     private final UserRepo userRepo;
     private final ProductRepo productRepo;
-    private final OrderMaper orderMaper;
 
 
     @Override
@@ -53,14 +50,14 @@ public class OrderServiceIMPL implements OrderService {
        userRepo.save(user);
        product.getOrders().add(newOrder);
        productRepo.save(product);
-       return orderMaper.OrderToResponse(newOrder);
+       return OrderMaper.OrderToResponse(newOrder);
     }
 
     @Override
     public List<OrderResponse> getAllOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepo.findAll(pageable);
-        List<OrderResponse>orderResponses=orders.stream().map(orderMaper::OrderToResponse).toList();
+        List<OrderResponse>orderResponses=orders.stream().map(OrderMaper::OrderToResponse).toList();
         return new Result<>(orderResponses,page,size,orders.getTotalPages()).getData();
     }
 
@@ -69,7 +66,7 @@ public class OrderServiceIMPL implements OrderService {
         Order order=orderRepo.findById(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.ORDER_NOT_FOUND));
-        return orderMaper.OrderToResponse(order);
+        return OrderMaper.OrderToResponse(order);
     }
 
     @Override
@@ -77,7 +74,7 @@ public class OrderServiceIMPL implements OrderService {
         Order order=orderRepo.findById(id)
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.ORDER_NOT_FOUND));
-        User user=userRepo.findById(order.getUser().getId())
+        User user=userRepo.findById(order.getUser().getUserId())
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
 
@@ -108,7 +105,7 @@ public class OrderServiceIMPL implements OrderService {
 
         while (iterator.hasNext()){
             Product p=iterator.next();
-            if (p.getId().equals(product.getId())){
+            if (p.getProductId().equals(product.getProductId())){
                 order1.getProducts().remove(p);
                 orderRepo.save(order1);
                 p.getOrders().remove(order1);
@@ -124,7 +121,7 @@ public class OrderServiceIMPL implements OrderService {
         orderRepo.save(order1);
         product1.getOrders().add(order1);
         productRepo.save(product);
-        return orderMaper.OrderToResponse(order1);
+        return OrderMaper.OrderToResponse(order1);
     }
 
     @Override
@@ -141,7 +138,7 @@ public class OrderServiceIMPL implements OrderService {
           orderRepo.save(order);
           product.getOrders().add(order);
           productRepo.save(product);
-        return orderMaper.OrderToResponse(order);
+        return OrderMaper.OrderToResponse(order);
     }
 }
 
