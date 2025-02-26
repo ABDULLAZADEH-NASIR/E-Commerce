@@ -50,7 +50,7 @@ public class ProductServiceIMPL implements ProductService {
         Page<Product> products;
 
 
-        products=productRepo.findAll(pageable);
+        products=productRepo.findAllProducts(pageable);
 
         List<ProductResponse>productResponses=products.stream().
                 map(ProductMaper::ProductToProductResponse).toList();
@@ -68,7 +68,7 @@ public class ProductServiceIMPL implements ProductService {
 
     @Override
     public ProductResponse getProductById(Long id) {
-        Product product=productRepo.findById(id).
+        Product product=productRepo.findByProductId(id).
                 orElseThrow(() -> new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.PRODUCT_NOT_FOUND));
         return ProductMaper.ProductToProductResponse(product);

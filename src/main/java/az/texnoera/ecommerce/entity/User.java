@@ -1,17 +1,15 @@
 package az.texnoera.ecommerce.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @Entity
 @Table(name = "users")
@@ -26,9 +24,21 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private List<Order>orders=new ArrayList<>();
+    private Set<Order> orders=new HashSet<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<UserEmail> UserEmails=new ArrayList<>();
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private Set<UserEmail> userEmails=new HashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
+    }
 }

@@ -20,8 +20,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class OrderServiceIMPL implements OrderService {
                        ExceptionStatusCode.PRODUCT_NOT_FOUND));
        Order newOrder=new Order();
        newOrder.setUser(user);
-       newOrder.setProducts(new ArrayList<>());
+       newOrder.setProducts(new HashSet<>());
        newOrder.getProducts().add(product);
        orderRepo.save(newOrder);
        user.getOrders().add(newOrder);
@@ -53,6 +55,7 @@ public class OrderServiceIMPL implements OrderService {
        return OrderMaper.OrderToResponse(newOrder);
     }
 
+    @Transactional
     @Override
     public List<OrderResponse> getAllOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -61,6 +64,7 @@ public class OrderServiceIMPL implements OrderService {
         return new Result<>(orderResponses,page,size,orders.getTotalPages()).getData();
     }
 
+    @Transactional
     @Override
     public OrderResponse getOrderById(Long id) {
         Order order=orderRepo.findById(id).
@@ -82,8 +86,6 @@ public class OrderServiceIMPL implements OrderService {
         orderRepo.delete(order);
         user.getOrders().remove(order);
         userRepo.save(user);
-
-
     }
 
     @Override

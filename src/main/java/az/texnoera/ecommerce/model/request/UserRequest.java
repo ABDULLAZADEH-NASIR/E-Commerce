@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRequest {
     @NotNull
-    @Pattern(regexp = "^[A-Za-zƏəĞğİıÖöŞşÜüÇç]{1,11}$",message = "Name is not valid")
+    @Pattern(regexp = "^[A-Za-zƏÖĞÜÇŞIəöğüçşı]{2,11}$",message = "Name is not valid")
     private String userName;
     @NotNull
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*!?])[A-Za-z\\d@#$%^&*!?]{4,}$",
