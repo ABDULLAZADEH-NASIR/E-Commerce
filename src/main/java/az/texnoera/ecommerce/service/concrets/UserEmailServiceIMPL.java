@@ -25,6 +25,7 @@ import java.util.List;
 public class UserEmailServiceIMPL implements UserEmailService {
     private final UserEmailRepo userEmailRepo;
     private final UserRepo userRepo;
+    private final UserEmailMaper userEmailMaper;
 
     @Override
     public UserEmailResponse saveMail(UserEmailRequestForSave userEmailRequest) {
@@ -32,12 +33,12 @@ public class UserEmailServiceIMPL implements UserEmailService {
                orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                        ExceptionStatusCode.USER_NOT_FOUND));
 
-        UserEmail userEmail = UserEmailMaper.RequestToUserEmailSave(userEmailRequest);
+        UserEmail userEmail = userEmailMaper.RequestToUserEmailSave(userEmailRequest);
         userEmail.setUser(user);
         user.getUserEmails().add(userEmail);
         userRepo.save(user);
         userEmailRepo.save(userEmail);
-        return UserEmailMaper.UserEmailToUserEmailResponse(userEmail);
+        return userEmailMaper.UserEmailToUserEmailResponse(userEmail);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class UserEmailServiceIMPL implements UserEmailService {
         UserEmail userEmail=userEmailRepo.findById(id)
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_EMAIL_NOT_FOUND));
-        User user=userRepo.findById(userEmail.getUser().getUserId()).
+        User user=userRepo.findById(userEmail.getUser().getId()).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
         user.getUserEmails().remove(userEmail);
@@ -60,24 +61,24 @@ public class UserEmailServiceIMPL implements UserEmailService {
                         ExceptionStatusCode.USER_EMAIL_NOT_FOUND));
         userEmail.setEmail(userEmailRequest.getEmail());
         userEmailRepo.save(userEmail);
-        return UserEmailMaper.UserEmailToUserEmailResponse(userEmail);
+        return userEmailMaper.UserEmailToUserEmailResponse(userEmail);
     }
 
     @Override
     public Result<UserEmailResponse> getAllEmails(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<UserEmail> userEmails=userEmailRepo.findAllUserEmail(pageable);
+        Page<UserEmail> userEmails=userEmailRepo.findAll(pageable);
         List<UserEmailResponse>userEmailResponses=userEmails.stream()
-                .map(UserEmailMaper::UserEmailToUserEmailResponse).toList();
+                .map(userEmailMaper::UserEmailToUserEmailResponse).toList();
         return new Result<>(userEmailResponses,page,pageSize,userEmails.getTotalPages());
     }
 
     @Override
     public UserEmailResponse getUserEmailById(Long id) {
-        UserEmail userEmail=userEmailRepo.findUserEmailByUserEmailId(id)
+        UserEmail userEmail=userEmailRepo.findById(id)
                 .orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_EMAIL_NOT_FOUND));
-        return UserEmailMaper.UserEmailToUserEmailResponse(userEmail);
+        return userEmailMaper.UserEmailToUserEmailResponse(userEmail);
 
     }
 }

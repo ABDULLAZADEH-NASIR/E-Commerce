@@ -1,15 +1,14 @@
 package az.texnoera.ecommerce.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
 @Entity
 @Table(name = "user_emails")
@@ -17,24 +16,10 @@ public class UserEmail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long userEmailId;
+    private Long id;
     @Column(unique = true, nullable = false)
     private String email;
-    @ManyToOne(optional = false,cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
+    @ManyToOne(optional = false,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserEmail userEmail = (UserEmail) o;
-        return Objects.equals(userEmailId, userEmail.userEmailId) &&
-                Objects.equals(email, userEmail.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userEmailId, email);
-    }
 }

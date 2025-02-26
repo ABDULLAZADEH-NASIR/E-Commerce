@@ -1,14 +1,19 @@
 package az.texnoera.ecommerce.controller;
 
+import az.texnoera.ecommerce.config.MailSend;
 import az.texnoera.ecommerce.model.request.MailRequest;
 import az.texnoera.ecommerce.model.request.UserRequest;
 import az.texnoera.ecommerce.model.request.UserRequestForUpdate;
 import az.texnoera.ecommerce.model.response.Result;
 import az.texnoera.ecommerce.model.response.UserResponse;
+import az.texnoera.ecommerce.service.abstracts.UserService;
 import az.texnoera.ecommerce.service.concrets.UserServiceIMPL;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailSender;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

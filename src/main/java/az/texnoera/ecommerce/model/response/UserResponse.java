@@ -8,17 +8,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UserResponse {
-    private Long userId;
-    private String userName;
-   private Set<OrderResponseForUser> orders=new HashSet<>();
-    private Set<UserEmailResponseForUser> emails=new HashSet<>();
+    private Long id;
+    private String name;
+    private List<OrderResponseForUser> orders=new ArrayList<>();
+    private List<UserEmailResponseForUser> emails=new ArrayList<>();
 }

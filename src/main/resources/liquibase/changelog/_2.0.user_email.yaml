@@ -7,7 +7,7 @@ databaseChangeLog:
             tableName: user_emails
             columns:
               - column:
-                  name: userEmailId
+                  name: id
                   type: bigint
                   autoIncrement: true
                   constraints:

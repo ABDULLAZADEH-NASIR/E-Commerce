@@ -1,12 +1,12 @@
 package az.texnoera.ecommerce.service.concrets;
 
 import az.texnoera.ecommerce.ExceptionsHandle.BasedExceptionHandle;
-import az.texnoera.ecommerce.security.config.MailSend;
+import az.texnoera.ecommerce.config.MailSend;
 import az.texnoera.ecommerce.entity.Order;
 import az.texnoera.ecommerce.entity.Product;
 import az.texnoera.ecommerce.entity.User;
 import az.texnoera.ecommerce.entity.UserEmail;
-import az.texnoera.ecommerce.maper.UserMapper;
+import az.texnoera.ecommerce.maper.UserMaper;
 import az.texnoera.ecommerce.model.enums.ExceptionStatusCode;
 import az.texnoera.ecommerce.model.request.MailRequest;
 import az.texnoera.ecommerce.model.request.UserRequest;
@@ -25,9 +25,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -37,27 +38,28 @@ public class UserServiceIMPL implements UserService {
     private final OrderRepo orderRepo;
     private final ProductRepo productRepo;
     private  final MailSend mailSend;
+    private final UserMaper userMaper;
 
 
     @Override
     public UserResponse addUser(UserRequest userRequest) {
-        User user = UserMapper.userRequestToUser(userRequest);
+        User user = userMaper.UserRequestToUser(userRequest);
         userRepo.save(user);
-        UserEmail userEmail= new UserEmail();
+        UserEmail userEmail=new UserEmail();
         userEmail.setEmail(userRequest.getEmail());
         userEmail.setUser(user);
         userEmailRepo.save(userEmail);
         user.getUserEmails().add(userEmail);
         userRepo.save(user);
-        return UserMapper.userToResponse(user);
+        return userMaper.UserToResponse(user);
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        User user=userRepo.findByUserId(id).
+        User user=userRepo.findById(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
-        return UserMapper.userToResponse(user);
+        return userMaper.UserToResponse(user);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class UserServiceIMPL implements UserService {
         List<Order> orders = orderRepo.findAllById(Collections.singletonList(id));
         userRepo.delete(user);
         for(Order order:orders){
-           Set<Product> products= order.getProducts();
+           List<Product>products= order.getProducts();
            for(Product product:products){
                product.getOrders().remove(order);
                productRepo.save(product);
@@ -80,26 +82,29 @@ public class UserServiceIMPL implements UserService {
 
     @Override
     public UserResponse updateUserById(Long id, UserRequestForUpdate userRequest) {
-        User user=userRepo.findByUserId(id).
+        User user=userRepo.findById(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.USER_NOT_FOUND));
-        user.setUserName(userRequest.getUserName());
+        user.setUsername(userRequest.getUsername());
         userRepo.save(user);
-        return UserMapper.userToResponse(user);
+        return userMaper.UserToResponse(user);
     }
 
     @Override
     public Result<UserResponse> getAllUsers(int page, int size) {
         Pageable pageable= PageRequest.of(page,size);
-        Page<User> users=userRepo.findAllUsers(pageable);
-        List<UserResponse> lists =users.stream().map(UserMapper::userToResponse).toList();
-        return new Result<>(lists,page,size,users.getTotalPages());
+        Page<User> users=userRepo.findAll(pageable);
+        List<UserResponse>list=users.stream().map(userMaper::UserToResponse).toList();
+        return new Result<>(list,page,size,users.getTotalPages());
     }
 
     @Override
     public String sendMailMessage(MailRequest mailRequest) {
+        Thread thread=new Thread(()->{
             mailSend.sendMail(mailRequest.
                     getTo(),mailRequest.getSubject(),mailRequest.getBody());
+        });
+        thread.start();
         return "Mail Successfully sent";
     }
 
