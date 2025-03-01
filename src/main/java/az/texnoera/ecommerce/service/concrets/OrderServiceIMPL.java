@@ -55,19 +55,17 @@ public class OrderServiceIMPL implements OrderService {
        return OrderMaper.OrderToResponse(newOrder);
     }
 
-    @Transactional
     @Override
     public List<OrderResponse> getAllOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> orders = orderRepo.findAll(pageable);
+        Page<Order> orders = orderRepo.findAllOrders(pageable);
         List<OrderResponse>orderResponses=orders.stream().map(OrderMaper::OrderToResponse).toList();
         return new Result<>(orderResponses,page,size,orders.getTotalPages()).getData();
     }
 
-    @Transactional
     @Override
     public OrderResponse getOrderById(Long id) {
-        Order order=orderRepo.findById(id).
+        Order order=orderRepo.findOrderByOrderId(id).
                 orElseThrow(()->new BasedExceptionHandle(HttpStatus.NOT_FOUND,
                         ExceptionStatusCode.ORDER_NOT_FOUND));
         return OrderMaper.OrderToResponse(order);
