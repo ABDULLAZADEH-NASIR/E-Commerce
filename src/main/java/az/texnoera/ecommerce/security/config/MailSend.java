@@ -1,4 +1,4 @@
-package az.texnoera.ecommerce.config;
+package az.texnoera.ecommerce.security.config;
 
 import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
