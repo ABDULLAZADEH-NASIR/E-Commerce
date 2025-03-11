@@ -1,7 +1,7 @@
 package az.texnoera.ecommerce.service.concrets;
 
 import az.texnoera.ecommerce.ExceptionsHandle.BasedExceptionHandle;
-import az.texnoera.ecommerce.config.MailSend;
+import az.texnoera.ecommerce.security.config.MailSend;
 import az.texnoera.ecommerce.entity.Order;
 import az.texnoera.ecommerce.entity.Product;
 import az.texnoera.ecommerce.entity.User;
@@ -18,7 +18,6 @@ import az.texnoera.ecommerce.repo.ProductRepo;
 import az.texnoera.ecommerce.repo.UserEmailRepo;
 import az.texnoera.ecommerce.repo.UserRepo;
 import az.texnoera.ecommerce.service.abstracts.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
